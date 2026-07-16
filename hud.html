@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: transparent;
+            color: white;
+            padding: 10px;
+        }
+        .hud-container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .stat:last-child {
+            margin-bottom: 0;
+        }
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .stat-bar {
+            flex: 1;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .stat-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .health-fill {
+            background: linear-gradient(90deg, #f44336, #ff5722);
+        }
+        .armor-fill {
+            background: linear-gradient(90deg, #2196F3, #03A9F4);
+        }
+        .stat-value {
+            width: 50px;
+            text-align: right;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .money {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hud-container">
+        <div class="stat">
+            <span class="stat-icon">❤️</span>
+            <div class="stat-bar">
+                <div class="stat-fill health-fill" id="healthBar" style="width: 100%"></div>
+            </div>
+            <span class="stat-value" id="healthValue">100</span>
+        </div>
+        
+        <div class="stat">
+            <span class="stat-icon">🛡️</span>
+            <div class="stat-bar">
+                <div class="stat-fill armor-fill" id="armorBar" style="width: 0%"></div>
+            </div>
+            <span class="stat-value" id="armorValue">0</span>
+        </div>
+        
+        <div class="money">$<span id="moneyValue">0</span></div>
+    </div>
+
+    <script>
+        function updateHUD(health, armor, money) {
+            document.getElementById('healthBar').style.width = health + '%';
+            document.getElementById('healthValue').innerText = health;
+            
+            document.getElementById('armorBar').style.width = armor + '%';
+            document.getElementById('armorValue').innerText = armor;
+            
+            document.getElementById('moneyValue').innerText = money.toLocaleString();
+        }
+        
+        if (window.geckoju) {
+            window.geckoju.onData = function(data) {
+                try {
+                    var obj = JSON.parse(data);
+                    if (obj.health !== undefined) {
+                        updateHUD(obj.health, obj.armor || 0, obj.money || 0);
+                    }
+                } catch(e) {
+                    console.error("Failed to parse HUD data:", e);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
